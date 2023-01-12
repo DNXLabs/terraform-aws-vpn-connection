@@ -1,6 +1,6 @@
-# terraform-aws-transit-gateway
+# terraform-aws-vpn-connection
 
-This module creates the transit gateway network resources.
+This module creates the VPN site-to-site network resources.
 
 The following resources will be created:
  - Private Gateway
