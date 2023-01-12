@@ -185,3 +185,9 @@ variable "ipsec_type" {
   description = "Define Ipsec Type"
   default     = "ipsec.1"
 }
+
+
+variable "transit_gateway_id" {
+  type        = string
+  description = "Define Transit gateway id in case private gateway is not defined"
+}
