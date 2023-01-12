@@ -2,9 +2,15 @@
 
 # https://www.terraform.io/docs/providers/aws/r/vpn_gateway.html
 resource "aws_vpn_gateway" "default" {
+  count           = var.transit_gateway_id != null ? 1 : 0
   vpc_id          = var.vpc_id
   amazon_side_asn = var.vpn_gateway_amazon_side_asn
-  tags            = module.this.tags
+  tags = merge(
+    var.tags,
+    {
+      "Name" = "vpg-${var.name}"
+    },
+  )
 }
 
 # https://www.terraform.io/docs/providers/aws/r/customer_gateway.html
@@ -12,14 +18,19 @@ resource "aws_customer_gateway" "default" {
   bgp_asn    = var.customer_gateway_bgp_asn
   ip_address = var.customer_gateway_ip_address
   type       = var.ipsec_type
-  tags       = module.this.tags
+  tags = merge(
+    var.tags,
+    {
+      "Name" = "cgw-${var.name}"
+    },
+  )
 }
 
 # https://www.terraform.io/docs/providers/aws/r/vpn_connection.html
 resource "aws_vpn_connection" "default" {
-  vpn_gateway_id           = join("", aws_vpn_gateway.default.*.id)
-  customer_gateway_id      = try(join("", aws_customer_gateway.default.*.id), null)
-  transit_gateway_id       = var.customer_gateway_id != null ? var.customer_gateway_id : var.transit_gateway_id
+  vpn_gateway_id           = try(lenght(aws_vpn_gateway.default.*.id) > 0 ? aws_vpn_gateway.default.*.id : null, null)
+  customer_gateway_id      = join("", aws_customer_gateway.default.*.id)
+  transit_gateway_id       = try(var.transit_gateway_id, null)
   type                     = var.ipsec_type
   static_routes_only       = var.vpn_connection_static_routes_only
   local_ipv4_network_cidr  = var.vpn_connection_local_ipv4_network_cidr
@@ -51,12 +62,17 @@ resource "aws_vpn_connection" "default" {
   tunnel2_phase1_integrity_algorithms  = var.vpn_connection_tunnel2_phase1_integrity_algorithms
   tunnel2_phase2_integrity_algorithms  = var.vpn_connection_tunnel2_phase2_integrity_algorithms
 
-  tags = module.this.tags
+  tags = merge(
+    var.tags,
+    {
+      "Name" = "tg-${var.name}"
+    },
+  )
 }
 
 # https://www.terraform.io/docs/providers/aws/r/vpn_gateway_route_propagation.html
 resource "aws_vpn_gateway_route_propagation" "default" {
-  count          = length(var.route_table_ids) : 0
+  count          = var.transit_gateway_id != null && length(var.route_table_ids) > 0 ? 1 : 0
   vpn_gateway_id = join("", aws_vpn_gateway.default.*.id)
   route_table_id = element(var.route_table_ids, count.index)
 }
