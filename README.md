@@ -32,30 +32,7 @@ module "vpn" {
 
 <!--- BEGIN_TF_DOCS --->
 
-## Requirements
-
-| Name | Version |
-|------|---------|
-| terraform | >= 0.13.0 |
-| aws | >= 3.56.0 |
-| random | >= 2.1.0 |
-| tls | >= 3.1.0 |
-
-## Providers
-
-| Name | Version |
-|------|---------|
-| aws | >= 3.56.0 |
-
-## Inputs
-
-| Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
-
-
-## Outputs
-
-No output.
+Error: Missing newline after argument: An argument definition must end with a newline.
 
 <!--- END_TF_DOCS --->
 
