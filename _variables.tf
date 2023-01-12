@@ -185,3 +185,25 @@ variable "ipsec_type" {
   description = "Define Ipsec Type"
   default     = "ipsec.1"
 }
+
+
+variable "transit_gateway_id" {
+  type        = string
+  description = "Define Transit gateway id in case private gateway is not defined"
+  default     = null
+}
+
+variable "name" {
+  type        = string
+  description = <<-EOT
+    ID element. Usually the component or solution name, e.g. 'app' or 'jenkins'.
+    This is the only ID element not also included as a `tag`.
+    The "name" tag is set to the full `id` string. There is no tag with the value of the `name` input.
+    EOT
+}
+
+variable "tags" {
+  type        = map(string)
+  default     = {}
+  description = "Extra tags to attach to resources"
+}
