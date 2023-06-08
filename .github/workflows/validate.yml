@@ -4,6 +4,8 @@ on:
   pull_request_target:
     types: [opened, synchronize]
 
+permissions: read-all
+
 jobs:
   tf-lint:
     name: Lint
