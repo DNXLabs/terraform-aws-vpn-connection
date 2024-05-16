@@ -1,8 +1,10 @@
-
+data "aws_vpn_gateway" "default" {
+  attached_vpc_id = var.vpc_id
+}
 
 # https://www.terraform.io/docs/providers/aws/r/vpn_gateway.html
 resource "aws_vpn_gateway" "default" {
-  count           = length(var.transit_gateway_id) > 0 ? 0 : 1
+  count           = var.transit_gateway_id != null ? (data.aws_vpn_gateway.default.id == null ? 1 : 0) : 0
   vpc_id          = var.vpc_id
   amazon_side_asn = var.vpn_gateway_amazon_side_asn
   tags = merge(
@@ -12,6 +14,7 @@ resource "aws_vpn_gateway" "default" {
     },
   )
 }
+
 
 # https://www.terraform.io/docs/providers/aws/r/customer_gateway.html
 resource "aws_customer_gateway" "default" {
