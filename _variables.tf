@@ -207,3 +207,9 @@ variable "tags" {
   default     = {}
   description = "Extra tags to attach to resources"
 }
+
+variable "create_vpn_gateway" {
+  type        = bool
+  description = "Create VPN Gateway"
+  default     = true
+}
