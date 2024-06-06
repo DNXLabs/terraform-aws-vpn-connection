@@ -1,10 +1,10 @@
 data "aws_vpn_gateway" "default" {
-  count           = var.create_vpn_gateway == "true" ? 1 : 0
+  count           = var.create_vpn_gateway == true ? 1 : 0
   attached_vpc_id = var.vpc_id
 }
 # https://www.terraform.io/docs/providers/aws/r/vpn_gateway.html
 resource "aws_vpn_gateway" "default" {
-  count           = var.transit_gateway_id != null ? (var.create_vpn_gateway ? 1 : 0) : 0
+  count           = var.transit_gateway_id == null ? (var.create_vpn_gateway ? 1 : 0) : 0
   vpc_id          = var.vpc_id
   amazon_side_asn = var.vpn_gateway_amazon_side_asn
   tags = merge(
@@ -30,7 +30,7 @@ resource "aws_customer_gateway" "default" {
 
 # https://www.terraform.io/docs/providers/aws/r/vpn_connection.html
 resource "aws_vpn_connection" "default" {
-  vpn_gateway_id           = try(lenght(aws_vpn_gateway.default.*.id) > 0 ? aws_vpn_gateway.default.*.id : var.create_vpn_gateway ? data.aws_vpn_gateway.default[0].id : null, null)
+  vpn_gateway_id           = try(aws_vpn_gateway.default[0].id, var.create_vpn_gateway ? data.aws_vpn_gateway.default[0].id : null, null) 
   customer_gateway_id      = join("", aws_customer_gateway.default.*.id)
   transit_gateway_id       = try(var.transit_gateway_id, null)
   type                     = var.ipsec_type
