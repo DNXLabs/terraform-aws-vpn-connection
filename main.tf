@@ -2,6 +2,7 @@ data "aws_vpn_gateway" "default" {
   count           = var.create_vpn_gateway == "true" ? 1 : 0
   attached_vpc_id = var.vpc_id
 }
+
 # https://www.terraform.io/docs/providers/aws/r/vpn_gateway.html
 resource "aws_vpn_gateway" "default" {
   count           = var.transit_gateway_id != null ? (var.create_vpn_gateway ? 1 : 0) : 0
@@ -81,7 +82,14 @@ resource "aws_vpn_gateway_route_propagation" "default" {
 
 # https://www.terraform.io/docs/providers/aws/r/vpn_connection_route.html
 resource "aws_vpn_connection_route" "default" {
-  count                  = var.vpn_connection_static_routes_only == "true" ? length(var.vpn_connection_static_routes_destinations) : 0
+  count                  = var.vpn_connection_static_routes_only && var.transit_gateway_id == null ? length(var.vpn_connection_static_routes_destinations) : 0
   vpn_connection_id      = join("", aws_vpn_connection.default.*.id)
   destination_cidr_block = element(var.vpn_connection_static_routes_destinations, count.index)
+}
+
+resource "aws_ec2_transit_gateway_route" "default" {
+  count                          = var.vpn_connection_static_routes_only && var.transit_gateway_id != null ? length(var.vpn_connection_static_routes_destinations) : 0
+  destination_cidr_block         = var.vpn_connection_static_routes_destinations[count.index]
+  transit_gateway_attachment_id  = aws_vpn_connection.default.transit_gateway_attachment_id
+  transit_gateway_route_table_id = var.transit_gateway_default_route_table_id
 }
