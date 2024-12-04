@@ -25,9 +25,9 @@ variable "route_table_ids" {
 }
 
 variable "vpn_connection_static_routes_only" {
-  type        = string
+  type        = bool
   description = "If set to `true`, the VPN connection will use static routes exclusively. Static routes must be used for devices that don't support BGP"
-  default     = "true"
+  default     = true
 }
 
 variable "vpn_connection_static_routes_destinations" {
@@ -189,7 +189,13 @@ variable "ipsec_type" {
 
 variable "transit_gateway_id" {
   type        = string
-  description = "Define Transit gateway id in case private gateway is not defined"
+  description = "Define Transit gateway id in case private gateway is not defined. To use when sharing the VPN connection with multiple accounts via Transit Gateway"
+  default     = null
+}
+
+variable "transit_gateway_default_route_table_id" {
+  type        = string
+  description = "Define Transit gateway default route table id. Required when vpn_connection_static_routes_destinations is used"
   default     = null
 }
 
