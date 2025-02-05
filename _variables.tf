@@ -5,11 +5,13 @@ variable "vpc_id" {
 
 variable "vpn_gateway_amazon_side_asn" {
   description = "The Autonomous System Number (ASN) for the Amazon side of the VPN gateway. If you don't specify an ASN, the Virtual Private Gateway is created with the default ASN"
+  type        = number
   default     = 64512
 }
 
 variable "customer_gateway_bgp_asn" {
   description = "The gateway's Border Gateway Protocol (BGP) Autonomous System Number (ASN)"
+  type        = number
   default     = 65000
 }
 
@@ -193,6 +195,12 @@ variable "transit_gateway_id" {
   default     = null
 }
 
+variable "transit_gateway_enabled" {
+  type        = bool
+  description = "If the transit gateway will be created"
+  default     = false
+}
+
 variable "transit_gateway_default_route_table_id" {
   type        = string
   description = "Define Transit gateway default route table id. Required when vpn_connection_static_routes_destinations is used"
@@ -214,8 +222,3 @@ variable "tags" {
   description = "Extra tags to attach to resources"
 }
 
-variable "create_vpn_gateway" {
-  type        = bool
-  description = "Create VPN Gateway"
-  default     = true
-}

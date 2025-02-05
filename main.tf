@@ -1,11 +1,12 @@
-data "aws_vpn_gateway" "default" {
-  count           = var.create_vpn_gateway == "true" ? 1 : 0
-  attached_vpc_id = var.vpc_id
+locals {
+  vpn_gateway_id      = one(aws_vpn_gateway.default[*].id)
+  customer_gateway_id = join("", aws_customer_gateway.default[*].id)
+  vpn_connection_id   = join("", aws_vpn_connection.default[*].id)
 }
 
 # https://www.terraform.io/docs/providers/aws/r/vpn_gateway.html
 resource "aws_vpn_gateway" "default" {
-  count           = var.transit_gateway_id != null ? (var.create_vpn_gateway ? 1 : 0) : 0
+  count           = var.transit_gateway_enabled ? 0 : 1
   vpc_id          = var.vpc_id
   amazon_side_asn = var.vpn_gateway_amazon_side_asn
   tags = merge(
@@ -31,8 +32,8 @@ resource "aws_customer_gateway" "default" {
 
 # https://www.terraform.io/docs/providers/aws/r/vpn_connection.html
 resource "aws_vpn_connection" "default" {
-  vpn_gateway_id           = try(lenght(aws_vpn_gateway.default.*.id) > 0 ? aws_vpn_gateway.default.*.id : var.create_vpn_gateway ? data.aws_vpn_gateway.default[0].id : null, null)
-  customer_gateway_id      = join("", aws_customer_gateway.default.*.id)
+  vpn_gateway_id           = var.transit_gateway_enabled ? null : local.vpn_gateway_id
+  customer_gateway_id      = local.customer_gateway_id
   transit_gateway_id       = try(var.transit_gateway_id, null)
   type                     = var.ipsec_type
   static_routes_only       = var.vpn_connection_static_routes_only
@@ -75,15 +76,15 @@ resource "aws_vpn_connection" "default" {
 
 # https://www.terraform.io/docs/providers/aws/r/vpn_gateway_route_propagation.html
 resource "aws_vpn_gateway_route_propagation" "default" {
-  count          = var.transit_gateway_id != null && length(var.route_table_ids) > 0 ? 1 : 0
-  vpn_gateway_id = join("", aws_vpn_gateway.default.*.id)
+  count          = var.transit_gateway_enabled ? 0 : length(var.route_table_ids)
+  vpn_gateway_id = local.vpn_gateway_id
   route_table_id = element(var.route_table_ids, count.index)
 }
 
 # https://www.terraform.io/docs/providers/aws/r/vpn_connection_route.html
 resource "aws_vpn_connection_route" "default" {
   count                  = var.vpn_connection_static_routes_only && var.transit_gateway_id == null ? length(var.vpn_connection_static_routes_destinations) : 0
-  vpn_connection_id      = join("", aws_vpn_connection.default.*.id)
+  vpn_connection_id      = local.vpn_connection_id
   destination_cidr_block = element(var.vpn_connection_static_routes_destinations, count.index)
 }
 
@@ -93,3 +94,4 @@ resource "aws_ec2_transit_gateway_route" "default" {
   transit_gateway_attachment_id  = aws_vpn_connection.default.transit_gateway_attachment_id
   transit_gateway_route_table_id = var.transit_gateway_default_route_table_id
 }
+
