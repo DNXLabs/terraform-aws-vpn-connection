@@ -193,6 +193,12 @@ variable "transit_gateway_id" {
   default     = null
 }
 
+variable "transit_gateway_enabled" {
+  type        = bool
+  description = "If the transit gateway will be created"
+  default     = false
+}
+
 variable "transit_gateway_default_route_table_id" {
   type        = string
   description = "Define Transit gateway default route table id. Required when vpn_connection_static_routes_destinations is used"
