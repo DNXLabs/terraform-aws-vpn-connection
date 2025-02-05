@@ -5,11 +5,13 @@ variable "vpc_id" {
 
 variable "vpn_gateway_amazon_side_asn" {
   description = "The Autonomous System Number (ASN) for the Amazon side of the VPN gateway. If you don't specify an ASN, the Virtual Private Gateway is created with the default ASN"
+  type        = number
   default     = 64512
 }
 
 variable "customer_gateway_bgp_asn" {
   description = "The gateway's Border Gateway Protocol (BGP) Autonomous System Number (ASN)"
+  type        = number
   default     = 65000
 }
 
@@ -220,8 +222,3 @@ variable "tags" {
   description = "Extra tags to attach to resources"
 }
 
-variable "create_vpn_gateway" {
-  type        = bool
-  description = "Create VPN Gateway"
-  default     = true
-}
