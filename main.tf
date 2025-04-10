@@ -52,6 +52,14 @@ resource "aws_vpn_connection" "default" {
   tunnel1_phase1_integrity_algorithms  = var.vpn_connection_tunnel1_phase1_integrity_algorithms
   tunnel1_phase2_integrity_algorithms  = var.vpn_connection_tunnel1_phase2_integrity_algorithms
 
+  tunnel1_log_options {
+    cloudwatch_log_options {
+      log_enabled       = var.vpn_connection_tunnel1_log_enabled
+      log_group_arn     = try(aws_cloudwatch_log_group.tunnel_logs[0].arn, "")
+      log_output_format = var.vpn_connection_tunnel1_log_output_format
+    }
+  }
+
   tunnel2_dpd_timeout_action = var.vpn_connection_tunnel2_dpd_timeout_action
   tunnel2_ike_versions       = var.vpn_connection_tunnel2_ike_versions
   tunnel2_inside_cidr        = var.vpn_connection_tunnel2_inside_cidr
@@ -64,6 +72,14 @@ resource "aws_vpn_connection" "default" {
   tunnel2_phase2_encryption_algorithms = var.vpn_connection_tunnel2_phase2_encryption_algorithms
   tunnel2_phase1_integrity_algorithms  = var.vpn_connection_tunnel2_phase1_integrity_algorithms
   tunnel2_phase2_integrity_algorithms  = var.vpn_connection_tunnel2_phase2_integrity_algorithms
+
+  tunnel2_log_options {
+    cloudwatch_log_options {
+      log_enabled       = var.vpn_connection_tunnel2_log_enabled
+      log_group_arn     = try(aws_cloudwatch_log_group.tunnel_logs[0].arn, "")
+      log_output_format = var.vpn_connection_tunnel2_log_output_format
+    }
+  }
 
   tags = merge(
     var.tags,
@@ -92,4 +108,11 @@ resource "aws_ec2_transit_gateway_route" "default" {
   destination_cidr_block         = var.vpn_connection_static_routes_destinations[count.index]
   transit_gateway_attachment_id  = aws_vpn_connection.default.transit_gateway_attachment_id
   transit_gateway_route_table_id = var.transit_gateway_default_route_table_id
+}
+
+resource "aws_cloudwatch_log_group" "tunnel_logs" {
+  count             = var.vpn_connection_tunnel1_log_enabled || var.vpn_connection_tunnel2_log_enabled ? 1 : 0
+  name              = var.vpn_tunnel_log_group_name
+  retention_in_days = var.vpn_tunnel_logs_retention
+  kms_key_id        = var.vpn_tunnel_logs_kms_key_arn
 }
