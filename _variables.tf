@@ -114,6 +114,18 @@ variable "vpn_connection_tunnel1_startup_action" {
   default     = "add"
 }
 
+variable "vpn_connection_tunnel1_log_enabled" {
+  type        = bool
+  description = "Enable or disable VPN tunnel logging feature. The default is false."
+  default     = false
+}
+
+variable "vpn_connection_tunnel1_log_output_format" {
+  type        = string
+  description = "Set log format. Possible values are: json and text. The default is json."
+  default     = "json"
+}
+
 variable "vpn_connection_tunnel2_dpd_timeout_action" {
   type        = string
   description = "The action to take after DPD timeout occurs for the second VPN tunnel. Specify restart to restart the IKE initiation. Specify clear to end the IKE session. Valid values are clear | none | restart."
@@ -178,6 +190,36 @@ variable "vpn_connection_tunnel2_startup_action" {
   type        = string
   description = "The action to take when the establishing the tunnel for the second VPN connection. By default, your customer gateway device must initiate the IKE negotiation and bring up the tunnel. Specify start for AWS to initiate the IKE negotiation. Valid values are add | start."
   default     = "add"
+}
+
+variable "vpn_connection_tunnel2_log_enabled" {
+  type        = bool
+  description = "Enable or disable VPN tunnel logging feature. The default is false."
+  default     = false
+}
+
+variable "vpn_connection_tunnel2_log_output_format" {
+  type        = string
+  description = "Set log format. Possible values are: json and text. The default is json."
+  default     = "json"
+}
+
+variable "vpn_tunnel_log_group_name" {
+  type        = string
+  description = "The name of the CloudWatch log group to send VPN tunnel logs to. The default is \"/aws/vpc/site-to-site-vpn\"."
+  default     = "/aws/vpc/site-to-site-vpn"
+}
+
+variable "vpn_tunnel_logs_retention" {
+  type        = number
+  default     = 365
+  description = "Retention in days for VPN tunnel logs CloudWatch Log Group. The default is 365."
+}
+
+variable "vpn_tunnel_logs_kms_key_arn" {
+  type        = string
+  default     = null
+  description = "The ARN of the KMS Key to use when encrypting VPN tunnel log data."
 }
 
 variable "ipsec_type" {

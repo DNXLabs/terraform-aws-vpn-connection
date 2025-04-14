@@ -73,6 +73,8 @@ module "vpn" {
 | vpn\_connection\_tunnel1\_phase2\_integrity\_algorithms | One or more integrity algorithms that are permitted for the first VPN tunnel for phase 2 IKE negotiations. Valid values are SHA1 \| SHA2-256 \| SHA2-384 \| SHA2-512. | `list(string)` | `[]` | no |
 | vpn\_connection\_tunnel1\_preshared\_key | The preshared key of the first VPN tunnel. The preshared key must be between 8 and 64 characters in length and cannot start with zero. Allowed characters are alphanumeric characters, periods(.) and underscores(\_) | `string` | `null` | no |
 | vpn\_connection\_tunnel1\_startup\_action | The action to take when the establishing the tunnel for the first VPN connection. By default, your customer gateway device must initiate the IKE negotiation and bring up the tunnel. Specify start for AWS to initiate the IKE negotiation. Valid values are add \| start. | `string` | `"add"` | no |
+| vpn\_connection\_tunnel1\_log\_enabled | Enable or disable VPN tunnel logging feature. The default is false. | `bool` | `false` | no |
+| vpn\_connection\_tunnel1\_log\_output\_format | Set log format. Possible values are: json and text. The default is json. | `string` | `"json"` | no |
 | vpn\_connection\_tunnel2\_dpd\_timeout\_action | The action to take after DPD timeout occurs for the second VPN tunnel. Specify restart to restart the IKE initiation. Specify clear to end the IKE session. Valid values are clear \| none \| restart. | `string` | `"clear"` | no |
 | vpn\_connection\_tunnel2\_ike\_versions | The IKE versions that are permitted for the second VPN tunnel. Valid values are ikev1 \| ikev2. | `list(string)` | `[]` | no |
 | vpn\_connection\_tunnel2\_inside\_cidr | The CIDR block of the inside IP addresses for the second VPN tunnel | `string` | `null` | no |
@@ -84,6 +86,11 @@ module "vpn" {
 | vpn\_connection\_tunnel2\_phase2\_integrity\_algorithms | One or more integrity algorithms that are permitted for the second VPN tunnel for phase 2 IKE negotiations. Valid values are SHA1 \| SHA2-256 \| SHA2-384 \| SHA2-512. | `list(string)` | `[]` | no |
 | vpn\_connection\_tunnel2\_preshared\_key | The preshared key of the second VPN tunnel. The preshared key must be between 8 and 64 characters in length and cannot start with zero. Allowed characters are alphanumeric characters, periods(.) and underscores(\_) | `string` | `null` | no |
 | vpn\_connection\_tunnel2\_startup\_action | The action to take when the establishing the tunnel for the second VPN connection. By default, your customer gateway device must initiate the IKE negotiation and bring up the tunnel. Specify start for AWS to initiate the IKE negotiation. Valid values are add \| start. | `string` | `"add"` | no |
+| vpn\_connection\_tunnel2\_log\_enabled | Enable or disable VPN tunnel logging feature. The default is false. | `bool` | `false` | no |
+| vpn\_connection\_tunnel2\_log\_output\_format | Set log format. Possible values are: json and text. The default is json. | `string` | `"json"` | no |
+| vpn\_tunnel\_log\_group\_name | The name of the CloudWatch log group to send VPN tunnel logs to. The default is "/aws/vpc/site-to-site-vpn". | `string` | `"/aws/vpc/site-to-site-vpn"` | no |
+| vpn\_tunnel\_logs\_retention | "Retention in days for VPN tunnel logs CloudWatch Log Group. The default is 365. | `number` | `365` | no |
+| vpn\_tunnel\_logs\_kms\_key\_arn | The ARN of the KMS Key to use when encrypting VPN tunnel log data. | `string` | `null` | no |
 | vpn\_gateway\_amazon\_side\_asn | The Autonomous System Number (ASN) for the Amazon side of the VPN gateway. If you don't specify an ASN, the Virtual Private Gateway is created with the default ASN | `number` | `64512` | no |
 
 ## Outputs
