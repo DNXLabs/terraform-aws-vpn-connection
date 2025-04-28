@@ -102,6 +102,18 @@ variable "vpn_connection_tunnel1_phase2_dh_group_numbers" {
   default     = []
 }
 
+variable "vpn_connection_tunnel1_phase1_lifetime_seconds" {
+  type        = number
+  description = "The lifetime in seconds for phase 1 of the IKE negotiations for the first VPN tunnel. You can specify a number between 900 and 28800."
+  default     = 28800
+}
+
+variable "vpn_connection_tunnel1_phase2_lifetime_seconds" {
+  type        = number
+  description = "The lifetime in seconds for phase 2 of the IKE negotiations for the first VPN tunnel. You can specify a number between 900 and 3600. The number that you specify must be less than the number of seconds for the phase 1 lifetime."
+  default     = 3600
+}
+
 variable "vpn_connection_tunnel1_preshared_key" {
   type        = string
   description = "The preshared key of the first VPN tunnel. The preshared key must be between 8 and 64 characters in length and cannot start with zero. Allowed characters are alphanumeric characters, periods(.) and underscores(_)"
@@ -178,6 +190,18 @@ variable "vpn_connection_tunnel2_phase2_dh_group_numbers" {
   type        = list(string)
   description = "List of one or more Diffie-Hellman group numbers that are permitted for the second VPN tunnel for phase 2 IKE negotiations. Valid values are 2 | 5 | 14 | 15 | 16 | 17 | 18 | 19 | 20 | 21 | 22 | 23 | 24."
   default     = []
+}
+
+variable "vpn_connection_tunnel2_phase1_lifetime_seconds" {
+  type        = number
+  description = "The lifetime in seconds for phase 1 of the IKE negotiations for the second VPN tunnel. You can specify a number between 900 and 28800."
+  default     = 28800
+}
+
+variable "vpn_connection_tunnel2_phase2_lifetime_seconds" {
+  type        = number
+  description = "The lifetime in seconds for phase 2 of the IKE negotiations for the second VPN tunnel. You can specify a number between 900 and 3600. The number that you specify must be less than the number of seconds for the phase 1 lifetime."
+  default     = 3600
 }
 
 variable "vpn_connection_tunnel2_preshared_key" {
